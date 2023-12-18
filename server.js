@@ -34,6 +34,6 @@ app.use(routes);
 createSocketConnection(server);
 
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`API server listening at http://localhost:${PORT}`);
 });

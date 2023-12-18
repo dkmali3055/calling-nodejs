@@ -1,6 +1,6 @@
 const API_KEY = process.env.VIDEOSDK_API_KEY;
 const SECRET_KEY = process.env.VIDEOSDK_SECRET_KEY;
-
+const jwt = require("jsonwebtoken");
 function getTokens (req, res){
   
     const options = { expiresIn: "1d", algorithm: "HS256" };

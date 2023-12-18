@@ -17,11 +17,15 @@ const userSchema = new mongoose.Schema({
     },
     profilePic: {
         type: String,
-        default: 'https://www.gravatar.com'
+        default: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70) + 1}`
     },
     password: {
         type: String,
         required: true
+    },
+    socketId : {
+        type: String,
+        default: ''
     },
     createdAt: {
         type: Date,

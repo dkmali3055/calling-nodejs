@@ -1,9 +1,9 @@
 {
-  "name": "videosdk-rtc-nodejs-sdk-example",
+  "name": "calling-app-server",
   "version": "1.0.0",
   "description": "A simple example of Videosdk webRTC sdk api server",
   "main": "server.js",
-  "author": "arjun-kava",
+  "author": "dkmali3055",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",

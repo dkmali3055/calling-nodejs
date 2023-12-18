@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../model/users.model'); // Assuming you have a User model defined
+const {User} = require('../model/users.model'); // Assuming you have a User model defined
 const jwt_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 //register function controller
@@ -82,7 +82,7 @@ async function getProfileData(req, res) {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
+        delete user._doc.password;
         // Return the user's profile data
         res.json({ user });
     } catch (error) {
