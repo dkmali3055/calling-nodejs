@@ -91,6 +91,10 @@ const createSocketConnection = (server) => {
         type: data.type,
       });
       await chat.save();
+
+      if(!receiver.socketId){
+        return;
+      }
       //emit message to receiver
       io.to(receiver.socketId).emit("receive-message", chat);
     });
@@ -117,6 +121,24 @@ const createSocketConnection = (server) => {
         });
 
       io.to(socket.id).emit("receive-conversation", conversations);
+    });
+
+    //get all messages of conversation
+    socket.on("get-messages", async (data) => {
+      let user = socket.data.user;
+      let conversation = await Conversation.findById(data.conversationId);
+      if (!conversation) {
+        return;
+      }
+      //get all messages of conversation
+      let messages = await Chat.find({
+        conversation: conversation._id,
+      })
+        .populate("sender")
+        .sort({
+          createdAt: 1,
+        });
+      io.to(socket.id).emit("receive-messages", messages);
     });
 
     //start call to receiver
