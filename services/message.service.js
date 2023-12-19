@@ -4,13 +4,13 @@ const { User } = require("../model/users.model");
 const Conversation = require("../model/conversation.model");
 const { Chat } = require("../model/chat.model");
 // const socketio = require('socket.io');
-const jwt_SECRET_KEY = process.env.jwt_SECRET_KEY;
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 // Function to create socket connection with JWT authentication
 const createSocketConnection = (server) => {
   const io = require("socket.io")(server);
   // io.use(socketioJwt.authorize({
-  //     secret: jwt_SECRET_KEY,
+  //     secret: JWT_SECRET_KEY,
   //     handshake: true,
   // }));
 
@@ -33,7 +33,7 @@ const createSocketConnection = (server) => {
     }
 
     try {
-      const decoded_token = jwt.verify(jwtTOken, jwt_SECRET_KEY);
+      const decoded_token = jwt.verify(jwtTOken, JWT_SECRET_KEY);
       socket.decoded_token = decoded_token;
       /*
       {

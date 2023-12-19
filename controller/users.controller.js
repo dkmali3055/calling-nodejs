@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const {User} = require('../model/users.model'); // Assuming you have a User model defined
-const jwt_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 //register function controller
 async function register(req, res) {
@@ -29,10 +29,10 @@ async function register(req, res) {
 
         // Save the user to the database
         await newUser.save();
-        console.log("jwt_SECRET_KEY",jwt_SECRET_KEY)
+        console.log("JWT_SECRET_KEY",JWT_SECRET_KEY)
 
         // Generate a JWT token
-        const token = jwt.sign({ userId: newUser._id,userName }, jwt_SECRET_KEY);
+        const token = jwt.sign({ userId: newUser._id,userName }, JWT_SECRET_KEY);
 
         delete newUser._doc.password;
         // Return the token and user details
@@ -62,7 +62,7 @@ async function login(req, res) {
         }
 
         // Generate a JWT token
-        const token = jwt.sign({ userId: user._id, userName }, jwt_SECRET_KEY);
+        const token = jwt.sign({ userId: user._id, userName }, JWT_SECRET_KEY);
 
         // Return the token and user details
         res.json({ token, user });
