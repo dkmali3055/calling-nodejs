@@ -29,6 +29,7 @@ async function register(req, res) {
 
         // Save the user to the database
         await newUser.save();
+        console.log("jwt_SECRET_KEY",jwt_SECRET_KEY)
 
         // Generate a JWT token
         const token = jwt.sign({ userId: newUser._id,userName }, jwt_SECRET_KEY);
