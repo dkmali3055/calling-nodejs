@@ -35,9 +35,16 @@ async function register(req, res) {
         // Generate a JWT token
         const token = jwt.sign({ userId: newUser._id,userName }, JWT_SECRET_KEY);
 
-        let { password , ...response } = newUser;
+        let response = {
+            _id: newUser._id,
+            deviceToken: newUser.deviceToken,
+            userName: newUser.userName,
+            fullName: newUser.fullName,
+            profilePic: newUser.profilePic,
+            token: token    
+        }
         // Return the token and user details
-        res.json({ token, user: response });
+        return successResponse(req, res, 200, Message.REGISTER_SUCCESS, response);
     } catch (error) {
         return errorResponse(req, res,500,{message : error.message,stack : error.stack});
     }
@@ -64,8 +71,16 @@ async function login(req, res) {
         // Generate a JWT token
         const token = jwt.sign({ userId: user._id, userName }, JWT_SECRET_KEY);
 
+        let response = {
+            _id: user._id,
+            deviceToken: user.deviceToken,
+            userName: user.userName,
+            fullName: user.fullName,
+            profilePic: user.profilePic,
+            token: token    
+        }
         // Return the token and user details
-        res.json({ token, user });
+        return successResponse(req, res, 200, Message.LOGIN_SUCCESS, response);
     } catch (error) {
         console.error(error);
         return errorResponse(req, res,500,{message : error.message,stack : error.stack});
@@ -83,7 +98,7 @@ async function getProfileData(req, res) {
         if (!user) {
             return successResponse(req, res, 404, Message.USER_NOT_FOUND, null);
         }
-        
+
         // Return the user's profile data
         return successResponse(req, res, 200, Message.PROFILE_DATA, user);
     } catch (error) {
