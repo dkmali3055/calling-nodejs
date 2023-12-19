@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const {User} = require('../model/users.model'); // Assuming you have a User model defined
+const { successResponse, errorResponse } = require('../utils/response.util');
+const { Message } = require('../utils/constant');
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 //register function controller
@@ -11,7 +13,7 @@ async function register(req, res) {
         // Check if the user already exists
         const existingUser = await User.findOne({ userName });
         if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+            return successResponse(req, res, 400, Message.USER_ALREADY_EXISTS, null);
         }
 
         // Hash the password
@@ -29,36 +31,34 @@ async function register(req, res) {
 
         // Save the user to the database
         await newUser.save();
-        console.log("JWT_SECRET_KEY",JWT_SECRET_KEY)
 
         // Generate a JWT token
         const token = jwt.sign({ userId: newUser._id,userName }, JWT_SECRET_KEY);
 
-        delete newUser._doc.password;
+        let { password , ...response } = newUser;
         // Return the token and user details
-        res.json({ token, user: newUser });
+        res.json({ token, user: response });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        return errorResponse(req, res,500,{message : error.message,stack : error.stack});
     }
 }
 
 //login function controller
 
 async function login(req, res) {
-    const { userName, password } = req.body;
-
+    
     try {
+        const { userName, password } = req.body;
         // Check if the user exists
         const user = await User.findOne({ userName });
         if (!user) {
-            return res.status(400).json({ message: 'User not found' });
+            return successResponse(req, res, 404, Message.USER_NOT_FOUND, null);
         }
 
         // Compare the password
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(400).json({ message: 'Invalid password' });
+            return successResponse(req, res, 400, Message.INVALID_PASSWORD, null);
         }
 
         // Generate a JWT token
@@ -68,34 +68,33 @@ async function login(req, res) {
         res.json({ token, user });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        return errorResponse(req, res,500,{message : error.message,stack : error.stack});
     }
 }
 
 // get profile data function controller
 
 async function getProfileData(req, res) {
-    const { userId } = req.user; // Assuming you have middleware to extract the user from the JWT token
-
+    
     try {
+        const { userId } = req.user; // Get the userId from the request object
         // Find the user by their ID
-        const user = await User.findById(userId);
+        const user = await User.findById(userId, { password: 0 });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return successResponse(req, res, 404, Message.USER_NOT_FOUND, null);
         }
-        delete user._doc.password;
+        
         // Return the user's profile data
-        res.json({ user });
+        return successResponse(req, res, 200, Message.PROFILE_DATA, user);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        return errorResponse(req, res,500,{message : error.message,stack : error.stack});
     }
 }
 
 // logout function controller
 
 async function logout(req, res) {   
-    return res.status(200).json({ message: 'Logout successfully' });
+    return successResponse(req, res, 200, Message.LOGOUT_SUCCESS, null);
 }
 
 
