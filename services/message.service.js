@@ -27,6 +27,7 @@ const createSocketConnection = (server) => {
       "Welcome to the socket connection! id : " + socket.id
     );
     const jwtTOken = socket.handshake.headers.authorization ?? null;
+    console.log("jwtTOken", jwtTOken);
     if (!jwtTOken) {
       handleDisconnect(socket);
       return;
@@ -148,6 +149,7 @@ const createSocketConnection = (server) => {
       if (!receiver) {
         return;
       }
+      console.log("start call",data);
       //emit call to receiver
       io.to(receiver.socketId).emit("incoming-call", {
         meetingId: data.meetingId, //room id
@@ -158,6 +160,7 @@ const createSocketConnection = (server) => {
         receiverName: receiver.userName,
       });
     });
+
 
     //accept call from caller
     socket.on("accept-call", async (data) => {
@@ -175,6 +178,21 @@ const createSocketConnection = (server) => {
       });
     });
 
+    //reject call from caller
+    socket.on("reject-call", async (data) => {
+      let user = socket.data.user;
+      let caller = await User.findById(data.callerId);
+      if (!caller) {
+        return;
+      }
+      //emit reject call to caller
+      io.to(caller.socketId).emit("call-rejected", {
+        meetingId: data.meetingId, //room id
+        receiverId: user._id,
+        receiverName: user.userName,
+        receiverProfilePic: user.profilePic,
+      });
+    });
     
     //IMPLEMENT disconnect
     socket.on("disconnect", () => {
