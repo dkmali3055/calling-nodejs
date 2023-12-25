@@ -24,6 +24,11 @@ router.post('/register', userController.register);
 // Get profile data route
 router.get('/profile-data',authMiddleware, userController.getProfileData);
 
+//get user list route
+router.get('/user-list',authMiddleware, userController.getUserList);
+
+//get user data route
+// router.get('/user-data',authMiddleware, userController.getUserData);
 // // Update profile data route
 // router.put('/update-profile-data',authMiddleware, userController.updateProfileData);
 

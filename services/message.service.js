@@ -178,6 +178,9 @@ const createSocketConnection = (server) => {
     
     //IMPLEMENT disconnect
     socket.on("disconnect", () => {
+      //clear socket id from user
+      user.socketId = null;
+      user.save();
       console.log("Socket disconnected:", socket.id);
     });
   });

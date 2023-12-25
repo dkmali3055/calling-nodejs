@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const {User} = require('../model/users.model'); // Assuming you have a User model defined
+const {User} = require('../model/users.model'); 
 const { successResponse, errorResponse } = require('../utils/response.util');
 const { Message } = require('../utils/constant');
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -112,10 +112,21 @@ async function logout(req, res) {
     return successResponse(req, res, 200, Message.LOGOUT_SUCCESS, null);
 }
 
+async function getUserList(req, res) {
+    try {
+        const { userId } = req.user;
+        const userList = await User.find({ _id: { $ne: userId } }, { password: 0 });
+        return successResponse(req, res, 200, Message.USER_LIST, userList);
+    } catch (error) {
+        return errorResponse(req, res,500,{message : error.message,stack : error.stack});
+    }
+}
+
 
 module.exports = {
     register,
     login,
     getProfileData,
-    logout
+    logout,
+    getUserList
 };
